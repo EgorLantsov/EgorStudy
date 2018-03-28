@@ -103,7 +103,7 @@ public class ArrayString {
         int a1 = arrQ[1];
         int a2 = arrQ[2];
         int a3 = arrQ[3];
-        if (a0 > a1 && a1 >a2 && a2 > a3) System.out.println("Возрастает");
+        if (a0 < a1 && a1 <a2 && a2 < a3) System.out.println("Возрастает"); // проверить условие, оно не совсем верно
         else System.out.println("Не возрастает");
         ////////////////////////////////////////////////////////////////////////////////////////////
 
