@@ -5,17 +5,32 @@ import java.util.Map;
 public class Bank {
     User user;
 
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
     // сделать потокобезопасный метод
     public static void transferMoney(Account src, Account dst, int value) throws InterruptedException {
+      Account from = src;
+      Account to = dst;
+      if (from.hashCode() >= to.hashCode()){
+          from = dst;
+          to = src; // меняем местами
+      }
         synchronized (src) {
-
+            synchronized (dst) {
+                // нужно чтобы была синхронизация на двух объектах и не было дедлока
                 if (src.amount >= value) {
                     dst.amount += value;
                     src.amount -= value;
                     System.out.println("transaction is done, money left: " + src.amount);
                 }
+            }
         }
     }
+
+
 
     public static void main(String[] args) {
         Bank bank = new Bank();
