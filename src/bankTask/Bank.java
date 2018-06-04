@@ -5,12 +5,15 @@ import java.util.Map;
 public class Bank {
     User user;
 
+    // сделать потокобезопасный метод
+    public static void transferMoney(Account src, Account dst, int value) throws InterruptedException {
+        synchronized (src) {
 
-    public synchronized static void transferMoney(Account src, Account dst, int value) throws InterruptedException {
-        if (src.amount >= value) {
-            dst.amount = +value;
-            src.amount = -value;
-            System.out.println("transaction is done");
+                if (src.amount >= value) {
+                    dst.amount += value;
+                    src.amount -= value;
+                    System.out.println("transaction is done, money left: " + src.amount);
+                }
         }
     }
 
@@ -26,28 +29,25 @@ public class Bank {
         Thread thread1 = new Thread(){
             @Override
             public void run() {
-                    synchronized (bank){
-                        try {
-                            transferMoney(account1,account2,2500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                try {
+                    transferMoney(account1, account2, 500);
+                    System.out.println("thread 1");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         };
 
         Thread thread2 = new Thread(){
             @Override
             public void run() {
-                    synchronized (bank){
-                        try {
-                            transferMoney(account3, account1, 1300);
-                            bank.notifyAll();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                try {
+                    transferMoney(account2, account1, 500);
+                    System.out.println("thread 2");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+            }
 
         };
         thread1.start();
